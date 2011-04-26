@@ -1,0 +1,9 @@
+name: Reagent
+main: net.hpxn.reagent.ReagentPlugin
+version: 0.1
+author: pr0f1x
+commands:
+  reagent:
+    description: Reagent spell casting.
+    usage: |
+           /<command> <spell> - initializes the chosen spell.
