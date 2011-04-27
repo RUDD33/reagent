@@ -150,19 +150,22 @@ public class ReagentPlayerListener extends PlayerListener {
 	public boolean stonewall( Player player ) {
 		Block wTargetBlock = player.getTargetBlock( null, 20 );
 		double wTargetX = wTargetBlock.getX();
-		double wTargetY = wTargetBlock.getY();
+		double wTargetZ = wTargetBlock.getZ();
 
-		double wPlayerX = player.getLocation().getX();
-		double wPlayerY = player.getLocation().getY();
+		double wCenterX = player.getLocation().getX();
+		double wCenterZ = player.getLocation().getZ();
 
-		double wDeltaX = wTargetX - wPlayerX;
-		double wDeltaY = wTargetY - wPlayerY;
-
-		double wTheta = Math.atan2( wDeltaY, wDeltaX );
-
-		double wDegrees = wTheta * (180 / Math.PI);
-
-		player.sendMessage( "Degrees: " + wDegrees );
+		double wAngle = Math.atan( (wTargetX - wCenterX) / (wCenterZ - wTargetZ) ) * (180 / Math.PI);
+		
+		if (wTargetX > wCenterX && wTargetZ > wCenterZ) {
+			wAngle = (90 + wAngle) + 90;
+		} else if (wTargetX < wCenterX && wTargetZ > wCenterZ ) {
+			wAngle = wAngle + 180;
+		} else if ( wTargetX < wCenterX && wTargetZ < wCenterZ ) {
+			wAngle = (90 + wAngle) + 270;
+		}
+		
+		player.sendMessage( "Degrees: " + wAngle );
 
 		return true;
 	}
