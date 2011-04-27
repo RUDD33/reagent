@@ -5,6 +5,10 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import net.hpxn.reagent.permissions.NijikokunPermissions;
+import net.hpxn.reagent.permissions.OpPermissions;
+import net.hpxn.reagent.permissions.PermissionProvider;
+
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -24,6 +28,7 @@ public class ReagentPlugin extends JavaPlugin {
 	private PluginDescriptionFile pdf;
 	private final ReagentPlayerListener pLst = new ReagentPlayerListener( this );
 	public ConcurrentHashMap<Player, String> playerSpellMap;
+	public PermissionProvider permissions;
 
 	public void onDisable() {
 		log.info( pdf.getName() + " v" + pdf.getVersion() + " - Disabled." );
@@ -33,19 +38,23 @@ public class ReagentPlugin extends JavaPlugin {
 		config = getConfiguration();
 		pdf = getDescription();
 
+		permissions = NijikokunPermissions.create( getServer(), "reagent" );
+		if ( permissions == null )
+			permissions = new OpPermissions( new String[] { "reagent" } );
+
 		pLst.setConfig( config );
 		playerSpellMap = new ConcurrentHashMap<Player, String>();
 
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent( Event.Type.PLAYER_INTERACT, pLst, Priority.Normal,
-			this );
+				this );
 
 		log.info( pdf.getName() + " v" + pdf.getVersion() + " - Enabled." );
 	}
 
 	@Override
 	public boolean onCommand( CommandSender sender, Command cmd, String label,
-					String[] args ) {
+			String[] args ) {
 		if ( !cmd.getName().equalsIgnoreCase( "reagent" ) ) {
 			return false;
 		}
@@ -54,7 +63,13 @@ public class ReagentPlugin extends JavaPlugin {
 			player = (Player) sender;
 		}
 		if ( args.length > 0 ) {
-			String spell = args[0];
+			String spell = args[ 0 ];
+
+			if ( !permissions.has( sender, spell.toLowerCase() ) ) {
+				sender.sendMessage( "You don't have permission to use this spell!" );
+				return true;
+			}
+
 			if ( isSpellAvailable( spell ) ) {
 				player.sendMessage( "Unknown spell..." );
 				return true;
@@ -92,17 +107,17 @@ public class ReagentPlugin extends JavaPlugin {
 	 * @return true if player has all required materials. false otherwise.
 	 */
 	private boolean hasMaterials( Player player, String spell, boolean remove ) {
-		for ( Entry<?, ?> wMaterialsCost : ((Map<?, ?>) config.getProperty( "spells."
-						+ spell )).entrySet() ) {
-			Material wMaterial =
-				Material.valueOf( ((String) wMaterialsCost.getKey()).toUpperCase() );
+		for ( Entry<?, ?> wMaterialsCost : ((Map<?, ?>) config
+				.getProperty( "spells." + spell )).entrySet() ) {
+			Material wMaterial = Material.valueOf( ((String) wMaterialsCost
+					.getKey()).toUpperCase() );
 			Integer wCost = (Integer) wMaterialsCost.getValue();
 			if ( !player.getInventory().contains( wMaterial, wCost ) ) {
 				player.sendMessage( "Not enough materials to cast " + spell
-								+ "." );
+						+ "." );
 				if ( config.getBoolean( "hint", false ) ) {
 					player.sendMessage( "Missing "
-									+ wMaterial.name().toLowerCase() + "." );
+							+ wMaterial.name().toLowerCase() + "." );
 				}
 				return false;
 			}
@@ -122,9 +137,9 @@ public class ReagentPlugin extends JavaPlugin {
 	private void removeMaterials( Player player, String spell ) {
 		String wSpellcost = "";
 		for ( Entry<?, ?> wMtlsAmt : ((Map<?, ?>) config.getProperty( "spells."
-						+ spell )).entrySet() ) {
-			Material wMtl =
-				Material.valueOf( ((String) wMtlsAmt.getKey()).toUpperCase() );
+				+ spell )).entrySet() ) {
+			Material wMtl = Material.valueOf( ((String) wMtlsAmt.getKey())
+					.toUpperCase() );
 			Integer wAmt = (Integer) wMtlsAmt.getValue();
 			removeItems( player, wMtl, wAmt );
 			wSpellcost += wAmt + " " + wMtl.name().toLowerCase() + " ";
