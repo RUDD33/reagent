@@ -70,7 +70,7 @@ public class ReagentPlugin extends JavaPlugin {
 				return true;
 			}
 
-			if ( isSpellAvailable( spell ) ) {
+			if ( !isSpellAvailable( spell ) ) {
 				player.sendMessage( "Unknown spell..." );
 				return true;
 			}
@@ -107,11 +107,11 @@ public class ReagentPlugin extends JavaPlugin {
 	 * @return true if player has all required materials. false otherwise.
 	 */
 	private boolean hasMaterials( Player player, String spell, boolean remove ) {
-		for ( Entry<?, ?> wMaterialsCost : ((Map<?, ?>) config
+		for ( Entry<?, ?> wMlsAmt : ((Map<?, ?>) config
 				.getProperty( "spells." + spell )).entrySet() ) {
-			Material wMaterial = Material.valueOf( ((String) wMaterialsCost
+			Material wMaterial = Material.valueOf( ((String) wMlsAmt
 					.getKey()).toUpperCase() );
-			Integer wCost = (Integer) wMaterialsCost.getValue();
+			Integer wCost = (Integer) wMlsAmt.getValue();
 			if ( !player.getInventory().contains( wMaterial, wCost ) ) {
 				player.sendMessage( "Not enough materials to cast " + spell
 						+ "." );

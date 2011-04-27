@@ -54,7 +54,7 @@ public class ReagentPlayerListener extends PlayerListener {
 			} catch ( IllegalArgumentException e ) {
 				log.severe( "Reagent: " + e.getMessage() );
 			} catch ( NoSuchMethodException e ) {
-				player.sendMessage( "Unknown spell..." );
+				player.sendMessage( "Unknown spell...." );
 			} catch ( IllegalAccessException e ) {
 				log.severe( "Reagent: " + e.getMessage() );
 			} catch ( InvocationTargetException e ) {
