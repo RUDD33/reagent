@@ -74,9 +74,14 @@ public class ReagentPlugin extends JavaPlugin {
 				player.sendMessage( "Unknown spell..." );
 				return true;
 			}
-
-			if ( hasMaterials( player, spell, true ) ) {
+			
+			if ( permissions.has( sender, "free" ) ) {
+				player.sendMessage( spell + " initialized. Free!" );
 				playerSpellMap.put( player, spell );
+			} else {
+				if ( hasMaterials( player, spell, true ) ) {
+					playerSpellMap.put( player, spell );
+				}
 			}
 			return true;
 		}
@@ -95,6 +100,10 @@ public class ReagentPlugin extends JavaPlugin {
 			return false;
 		}
 		return true;
+	}
+	
+	private boolean hasMaterials( Player player, String spell ) {
+		return hasMaterials(player, spell, false);
 	}
 
 	/**
