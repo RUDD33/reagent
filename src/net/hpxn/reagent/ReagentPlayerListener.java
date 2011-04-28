@@ -51,14 +51,18 @@ public class ReagentPlayerListener extends PlayerListener {
 				}
 			} catch ( SecurityException e ) {
 				log.severe( "Reagent: " + e.getMessage() );
+				e.printStackTrace();
 			} catch ( IllegalArgumentException e ) {
 				log.severe( "Reagent: " + e.getMessage() );
+				e.printStackTrace();
 			} catch ( NoSuchMethodException e ) {
 				player.sendMessage( "Unknown spell...." );
 			} catch ( IllegalAccessException e ) {
 				log.severe( "Reagent: " + e.getMessage() );
+				e.printStackTrace();
 			} catch ( InvocationTargetException e ) {
 				log.severe( "Reagent: " + e.getMessage() );
+				e.printStackTrace();
 			}
 		}
 	}
@@ -149,24 +153,23 @@ public class ReagentPlayerListener extends PlayerListener {
 
 	public boolean stonewall( Player player ) {
 		Block wTargetBlock = player.getTargetBlock( null, 20 );
-		double wTargetX = wTargetBlock.getX();
-		double wTargetZ = wTargetBlock.getZ();
-
-		double wCenterX = player.getLocation().getX();
-		double wCenterZ = player.getLocation().getZ();
-
-		double wAngle = Math.atan( (wTargetX - wCenterX) / (wCenterZ - wTargetZ) ) * (180 / Math.PI);
+		BlockFace wDirection = getPlayerDirection(player);
 		
-		if (wTargetX > wCenterX && wTargetZ > wCenterZ) {
-			wAngle = (90 + wAngle) + 90;
-		} else if (wTargetX < wCenterX && wTargetZ > wCenterZ ) {
-			wAngle = wAngle + 180;
-		} else if ( wTargetX < wCenterX && wTargetZ < wCenterZ ) {
-			wAngle = (90 + wAngle) + 270;
+		if ( wDirection == BlockFace.NORTH || wDirection == BlockFace.SOUTH ) {
+			Block wOneUp = wTargetBlock.getRelative(BlockFace.UP);
+			wOneUp.setType( Material.COBBLESTONE );
+			Block wOneEast = wOneUp.getRelative(BlockFace.EAST);
+			wOneEast.setType( Material.COBBLESTONE );
+			Block wOneWest = wOneUp.getRelative(BlockFace.WEST);
+			wOneWest.setType( Material.COBBLESTONE );
+		} else if ( wDirection == BlockFace.EAST || wDirection == BlockFace.WEST ) {
+			Block wOneUp = wTargetBlock.getRelative(BlockFace.UP);
+			wOneUp.setType( Material.COBBLESTONE );
+			Block wOneEast = wOneUp.getRelative(BlockFace.NORTH);
+			wOneEast.setType( Material.COBBLESTONE );
+			Block wOneWest = wOneUp.getRelative(BlockFace.SOUTH);
+			wOneWest.setType( Material.COBBLESTONE );
 		}
-		
-		player.sendMessage( "Degrees: " + wAngle );
-
 		return true;
 	}
 
@@ -273,5 +276,51 @@ public class ReagentPlayerListener extends PlayerListener {
 		wTargetBlock.setTypeId( 46, false );
 		wTargetBlock.getFace( BlockFace.UP ).setType( Material.FIRE );
 		return true;
+	}
+	
+	/**
+	 * Returns what direction the player is facing as a block face. If anyone 
+	 * knows a better way to determine this let me know.
+	 * 
+	 * @param player
+	 * @return BlockFace
+	 */
+	private BlockFace getPlayerDirection( Player player ) {
+		Block wTargetBlock = player.getTargetBlock( null, 20 );
+		double wTargetX = wTargetBlock.getX();
+		double wTargetZ = wTargetBlock.getZ();
+
+		double wCenterX = player.getLocation().getX();
+		double wCenterZ = player.getLocation().getZ();
+
+		double wAngle = Math.atan( (wTargetX - wCenterX) / (wCenterZ - wTargetZ) ) * (180 / Math.PI);
+		
+		if (wTargetX > wCenterX && wTargetZ > wCenterZ) {
+			wAngle = (90 + wAngle) + 90;
+		} else if (wTargetX < wCenterX && wTargetZ > wCenterZ ) {
+			wAngle = wAngle + 180;
+		} else if ( wTargetX < wCenterX && wTargetZ < wCenterZ ) {
+			wAngle = (90 + wAngle) + 270;
+		}
+		
+		BlockFace wDirection = null;
+		if ( wAngle < 45 ) {
+			// player facing east.
+			wDirection = BlockFace.EAST;
+		} else if ( wAngle < 135 ) {
+			// player facing south.
+			wDirection = BlockFace.SOUTH;
+		} else if ( wAngle < 225 ) {
+			// player facing west.
+			wDirection = BlockFace.WEST;
+		} else if ( wAngle < 315 ) {
+			// player facing north.
+			wDirection = BlockFace.NORTH;
+		} else if ( wAngle < 360 ) {
+			// player facing east.
+			wDirection = BlockFace.EAST;
+		}
+		
+		return wDirection;
 	}
 }
