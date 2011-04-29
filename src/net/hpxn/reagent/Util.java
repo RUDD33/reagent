@@ -25,7 +25,8 @@ public class Util {
 	 * @return BlockFace
 	 */
 	public static BlockFace getPlayerDirection(Player player) {
-		Block wTargetBlock = player.getTargetBlock(null, 20);
+		Block wTargetBlock = player.getTargetBlock(
+			null, ReagentPlayerListener.MAX_DISTANCE);
 		double wTargetX = wTargetBlock.getX();
 		double wTargetZ = wTargetBlock.getZ();
 

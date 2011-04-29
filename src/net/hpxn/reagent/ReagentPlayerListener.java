@@ -20,8 +20,8 @@ public class ReagentPlayerListener extends PlayerListener {
 	protected static final Logger log = Logger.getLogger("Minecraft");
 	private static ReagentPlugin rp;
 	private Configuration config;
-	private final int MAX_HEALTH = 20;
-	private final int MAX_DISTANCE = 120;
+	public final static int MAX_HEALTH = 20;
+	public final static int MAX_DISTANCE = 120;
 
 	public ReagentPlayerListener(ReagentPlugin plugin) {
 		rp = plugin;
