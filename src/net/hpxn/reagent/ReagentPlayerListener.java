@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -17,13 +18,13 @@ import org.bukkit.util.config.Configuration;
 
 public class ReagentPlayerListener extends PlayerListener {
 	protected static final Logger log = Logger.getLogger("Minecraft");
-	private final ReagentPlugin rp;
+	private static ReagentPlugin rp;
 	private Configuration config;
 	private final int MAX_HEALTH = 20;
 	private final int MAX_DISTANCE = 120;
 
-	public ReagentPlayerListener(ReagentPlugin rp) {
-		this.rp = rp;
+	public ReagentPlayerListener(ReagentPlugin plugin) {
+		rp = plugin;
 	}
 
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -40,13 +41,15 @@ public class ReagentPlayerListener extends PlayerListener {
 					if (isSuccess) {
 						if (config.getBoolean("broadcast", true)) {
 							rp.getServer().broadcastMessage(
-									player.getName() + " cast " + wSpell + "!");
+									ChatColor.AQUA + player.getName()
+											+ " cast " + wSpell + "!");
 						} else {
-							player.sendMessage("You cast " + wSpell + "!");
+							player.sendMessage(ChatColor.AQUA + "You cast "
+									+ wSpell + "!");
 						}
 						rp.playerSpellMap.remove(player);
 					} else {
-						player.sendMessage("fizzle...");
+						player.sendMessage(ChatColor.YELLOW + "fizzle...");
 					}
 				}
 			} catch (SecurityException e) {
@@ -56,7 +59,7 @@ public class ReagentPlayerListener extends PlayerListener {
 				log.severe("Reagent: " + e.getMessage());
 				e.printStackTrace();
 			} catch (NoSuchMethodException e) {
-				player.sendMessage("Unknown spell....");
+				player.sendMessage(ChatColor.YELLOW + "Unknown spell....");
 			} catch (IllegalAccessException e) {
 				log.severe("Reagent: " + e.getMessage());
 				e.printStackTrace();
@@ -76,13 +79,13 @@ public class ReagentPlayerListener extends PlayerListener {
 	}
 
 	/**
-	 * Casts the timetravel spell. This moves time forward 1 hour.
+	 * Casts the timetravel spell. This moves time forward around 2 hours.
 	 * 
 	 * @param player
 	 * @return true if success
 	 */
 	public boolean timetravel(Player player) {
-		// TODO timetravel.
+		player.getWorld().setTime(player.getWorld().getTime() + 5000 );
 		return true;
 	}
 
@@ -150,59 +153,89 @@ public class ReagentPlayerListener extends PlayerListener {
 				CreatureType.SKELETON);
 		return true;
 	}
-	
+
 	/**
-	 * Casts the stonewall spell. Creates a stone wall infront of the player. 
-	 * I am not really happy with this implementation. I just wanted to see how 
-	 * it looked. I will try and make this better eventually.
+	 * Casts the stonewall spell. Creates a stone wall infront of the player. I
+	 * am not really happy with this implementation. I just wanted to see how it
+	 * looked. I will try and make this better eventually.
 	 * 
 	 * @param player
 	 * @return
 	 */
 	public boolean stonewall(Player player) {
-		Block wTargetBlock = player.getTargetBlock(null, 50);
-		setRelativeBlocks(wTargetBlock, BlockFace.UP, Material.COBBLESTONE, 3);
+		Block wTargetBlock = player.getTargetBlock(null, 25);
+		Util.setRelativeBlocks(wTargetBlock, BlockFace.UP,
+				Material.COBBLESTONE, 3);
 		Block wOneUp = wTargetBlock.getRelative(BlockFace.UP);
 		Block wTwoUp = wOneUp.getRelative(BlockFace.UP);
 		Block wThreeUp = wTwoUp.getRelative(BlockFace.UP);
 		Block wFourUp = wThreeUp.getRelative(BlockFace.UP);
 
-		BlockFace wDirection = getPlayerDirection(player);
+		BlockFace wDirection = Util.getPlayerDirection(player);
 		if (wDirection == BlockFace.NORTH || wDirection == BlockFace.SOUTH) {
-			setRelativeBlocks(wOneUp, BlockFace.EAST, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wOneUp, BlockFace.WEST, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wTwoUp, BlockFace.EAST, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wTwoUp, BlockFace.WEST, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wThreeUp, BlockFace.EAST, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wThreeUp, BlockFace.WEST, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wFourUp, BlockFace.EAST, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wFourUp, BlockFace.WEST, Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wOneUp, BlockFace.EAST,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wOneUp, BlockFace.WEST,
+					Material.COBBLESTONE, 3);
+
+			Util.setRelativeBlocks(wTwoUp, BlockFace.EAST,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wTwoUp, BlockFace.WEST,
+					Material.COBBLESTONE, 3);
+
+			Util.setRelativeBlocks(wThreeUp, BlockFace.EAST,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wThreeUp, BlockFace.WEST,
+					Material.COBBLESTONE, 3);
+
+			Util.setRelativeBlocks(wFourUp, BlockFace.EAST,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wFourUp, BlockFace.WEST,
+					Material.COBBLESTONE, 3);
 		} else if (wDirection == BlockFace.EAST || wDirection == BlockFace.WEST) {
-			setRelativeBlocks(wOneUp, BlockFace.NORTH, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wOneUp, BlockFace.SOUTH, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wTwoUp, BlockFace.NORTH, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wTwoUp, BlockFace.SOUTH, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wThreeUp, BlockFace.NORTH, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wThreeUp, BlockFace.SOUTH, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wFourUp, BlockFace.NORTH, Material.COBBLESTONE, 3);
-			setRelativeBlocks(wFourUp, BlockFace.SOUTH, Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wOneUp, BlockFace.NORTH,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wOneUp, BlockFace.SOUTH,
+					Material.COBBLESTONE, 3);
+
+			Util.setRelativeBlocks(wTwoUp, BlockFace.NORTH,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wTwoUp, BlockFace.SOUTH,
+					Material.COBBLESTONE, 3);
+
+			Util.setRelativeBlocks(wThreeUp, BlockFace.NORTH,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wThreeUp, BlockFace.SOUTH,
+					Material.COBBLESTONE, 3);
+
+			Util.setRelativeBlocks(wFourUp, BlockFace.NORTH,
+					Material.COBBLESTONE, 3);
+			Util.setRelativeBlocks(wFourUp, BlockFace.SOUTH,
+					Material.COBBLESTONE, 3);
 		}
 		return true;
 	}
 
-	private void setRelativeBlocks(Block targetBlock, BlockFace blockFace, Material material,
-			int num) {
-		targetBlock = targetBlock.getRelative(blockFace);
-		targetBlock.setType(material);
-		
-		if ( num > 0 ) {
-			num--;
-			setRelativeBlocks(targetBlock, blockFace, material, num);
-		}
-	}
-
 	public boolean firewall(Player player) {
-		// TODO firewall.
+		Block wTargetBlock = player.getTargetBlock(null, 25);
+		Util.setRelativeBlocks(wTargetBlock, BlockFace.UP, Material.FIRE, 3);
+		Block wOneUp = wTargetBlock.getRelative(BlockFace.UP);
+		Block wTwoUp = wOneUp.getRelative(BlockFace.UP);
+
+		BlockFace wDirection = Util.getPlayerDirection(player);
+		if (wDirection == BlockFace.NORTH || wDirection == BlockFace.SOUTH) {
+			Util.setRelativeBlocks(wOneUp, BlockFace.EAST, Material.FIRE, 3);
+			Util.setRelativeBlocks(wOneUp, BlockFace.WEST, Material.FIRE, 3);
+
+			Util.setRelativeBlocks(wTwoUp, BlockFace.EAST, Material.FIRE, 3);
+			Util.setRelativeBlocks(wTwoUp, BlockFace.WEST, Material.FIRE, 3);
+		} else if (wDirection == BlockFace.EAST || wDirection == BlockFace.WEST) {
+			Util.setRelativeBlocks(wOneUp, BlockFace.NORTH, Material.FIRE, 3);
+			Util.setRelativeBlocks(wOneUp, BlockFace.SOUTH, Material.FIRE, 3);
+
+			Util.setRelativeBlocks(wTwoUp, BlockFace.NORTH, Material.FIRE, 3);
+			Util.setRelativeBlocks(wTwoUp, BlockFace.SOUTH, Material.FIRE, 3);
+		}
 		return true;
 	}
 
@@ -296,53 +329,5 @@ public class ReagentPlayerListener extends PlayerListener {
 		wTargetBlock.setTypeId(46, false);
 		wTargetBlock.getFace(BlockFace.UP).setType(Material.FIRE);
 		return true;
-	}
-
-	/**
-	 * Returns what direction the player is facing as a block face. If anyone
-	 * knows a better way to determine this let me know.
-	 * 
-	 * @param player
-	 * @return BlockFace
-	 */
-	private BlockFace getPlayerDirection(Player player) {
-		Block wTargetBlock = player.getTargetBlock(null, 20);
-		double wTargetX = wTargetBlock.getX();
-		double wTargetZ = wTargetBlock.getZ();
-
-		double wCenterX = player.getLocation().getX();
-		double wCenterZ = player.getLocation().getZ();
-
-		double wAngle = Math
-				.atan((wTargetX - wCenterX) / (wCenterZ - wTargetZ))
-				* (180 / Math.PI);
-
-		if (wTargetX > wCenterX && wTargetZ > wCenterZ) {
-			wAngle = (90 + wAngle) + 90;
-		} else if (wTargetX < wCenterX && wTargetZ > wCenterZ) {
-			wAngle = wAngle + 180;
-		} else if (wTargetX < wCenterX && wTargetZ < wCenterZ) {
-			wAngle = (90 + wAngle) + 270;
-		}
-
-		BlockFace wDirection = null;
-		if (wAngle < 45) {
-			// player facing east.
-			wDirection = BlockFace.EAST;
-		} else if (wAngle < 135) {
-			// player facing south.
-			wDirection = BlockFace.SOUTH;
-		} else if (wAngle < 225) {
-			// player facing west.
-			wDirection = BlockFace.WEST;
-		} else if (wAngle < 315) {
-			// player facing north.
-			wDirection = BlockFace.NORTH;
-		} else if (wAngle < 360) {
-			// player facing east.
-			wDirection = BlockFace.EAST;
-		}
-
-		return wDirection;
 	}
 }
