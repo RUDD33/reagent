@@ -1,0 +1,56 @@
+# Reagent Configuration
+# Spells: fire, bolt, precip, timebomb, teleport, teleportspawn, heal,
+#          arrowstorm, air, stonewall, firewall, skeleton, timetravel
+#
+# Info: https://github.com/pr0f1x/reagent
+
+# Broadcast to all players when someone casts a spell.
+broadcast: true
+
+# Give players hints on what materials they are missing.
+hint: true
+
+# List of spells. Configure each spells cost.
+spells:
+  fire:
+    wood: 10
+    flint: 2
+    coal: 1
+  bolt:
+    redstone: 10
+    glass: 1
+  precip:
+    diamond: 1
+    water_bucket: 1
+    redstone: 5
+  timebomb:
+    redstone: 10
+    coal: 20
+    flint: 5
+  teleport:
+    redstone: 8
+  teleportspawn:
+    compass: 1
+    redstone: 5
+  heal:
+    redstone: 10
+  arrowstorm:
+    wood: 5
+    feather: 1
+    flint: 1
+  air:
+    cobblestone: 1
+  stonewall:
+    stone: 20
+    redstone: 5
+  skeleton:
+    bone: 20
+    obsidian: 1
+  firewall:
+    wood: 10
+    coal: 10
+    flint: 1
+  timetravel:
+    clock: 1
+    diamond: 5
+    redstone: 5
