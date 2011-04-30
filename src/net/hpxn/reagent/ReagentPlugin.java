@@ -67,7 +67,7 @@ public class ReagentPlugin extends JavaPlugin {
 		if (args.length > 0) {
 			String spell = args[0];
 
-			if (!permissions.has(sender, spell.toLowerCase())) {
+			if (!permissions.has(sender, "spells." + spell.toLowerCase())) {
 				sender.sendMessage(ChatColor.DARK_RED
 						+ "You don't have permission to use this spell!");
 				return true;
