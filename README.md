@@ -22,3 +22,17 @@ Known Issues
 
 - Cannot target far away blocks when empty handed. (Bukkit bug?)
 - The air spell just doesn't work. (Bukkit bug?)
+
+
+Requirements
+------------
+
+- You must be using at least build 733 of CraftBukkit.
+- You need permissions to be able to give users the ability to cast spells. Without Permissions only OPS can cast spells.
+
+
+TODO
+----
+
+- Add more spells!
+- ?

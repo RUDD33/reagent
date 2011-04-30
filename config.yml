@@ -51,6 +51,6 @@ spells:
     coal: 10
     flint: 1
   timetravel:
-    clock: 1
+    watch: 1
     diamond: 5
     redstone: 5
