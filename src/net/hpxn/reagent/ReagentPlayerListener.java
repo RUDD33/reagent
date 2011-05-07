@@ -2,6 +2,7 @@ package net.hpxn.reagent;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
@@ -32,20 +33,20 @@ public class ReagentPlayerListener extends PlayerListener {
 				|| (event.getAction() == Action.RIGHT_CLICK_AIR)) {
 			Player player = event.getPlayer();
 			try {
-				String wSpell = rp.playerSpellMap.get(player);
-				if (wSpell != null) {
-					Method wMethod = this.getClass().getMethod(wSpell,
+				Cast cast = rp.playerSpellMap.get(player);
+				if (cast != null) {
+					Method wMethod = this.getClass().getMethod(cast.getName(),
 							Player.class);
-					boolean isSuccess = (Boolean) wMethod.invoke(this, player);
+					boolean isSuccess = (Boolean) wMethod.invoke(this, player, cast);
 
 					if (isSuccess) {
 						if (config.getBoolean("broadcast", true)) {
 							rp.getServer().broadcastMessage(
 									ChatColor.AQUA + player.getName()
-											+ " cast " + wSpell + "!");
+											+ " cast " + cast + "!");
 						} else {
 							player.sendMessage(ChatColor.AQUA + "You cast "
-									+ wSpell + "!");
+									+ cast + "!");
 						}
 						rp.playerSpellMap.remove(player);
 					} else {
@@ -84,8 +85,10 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean timetravel(Player player) {
+	public boolean timetravel(Player player, Cast cast) {
 		player.getWorld().setTime(player.getWorld().getTime() + 5000 );
+		cast.setSuccess(true);
+		cast.setLastUsed(new Date());
 		return true;
 	}
 
@@ -96,7 +99,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean teleportspawn(Player player) {
+	public boolean teleportspawn(Player player, Cast cast) {
 		player.teleport(player.getCompassTarget());
 		return true;
 	}
@@ -107,7 +110,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean air(Player player) {
+	public boolean air(Player player, Cast cast) {
 		player.setMaximumAir(20);
 		player.setRemainingAir(20);
 		return true;
@@ -119,7 +122,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean heal(Player player) {
+	public boolean heal(Player player, Cast cast) {
 		player.setHealth(MAX_HEALTH);
 		return true;
 	}
@@ -131,7 +134,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean arrowstorm(Player player) {
+	public boolean arrowstorm(Player player, Cast cast) {
 		for (int x = 0; x < 5; x++) {
 			player.shootArrow();
 		}
@@ -146,7 +149,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean skeleton(Player player) {
+	public boolean skeleton(Player player, Cast cast) {
 		Block wTargetBlock = player.getTargetBlock(null, 20).getFace(
 				BlockFace.UP);
 		player.getWorld().spawnCreature(wTargetBlock.getLocation(),
@@ -162,7 +165,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return
 	 */
-	public boolean stonewall(Player player) {
+	public boolean stonewall(Player player, Cast cast) {
 		Block wTargetBlock = player.getTargetBlock(null, 25);
 		Util.setRelativeBlocks(wTargetBlock, BlockFace.UP,
 				Material.COBBLESTONE, 3);
@@ -216,7 +219,7 @@ public class ReagentPlayerListener extends PlayerListener {
 		return true;
 	}
 
-	public boolean firewall(Player player) {
+	public boolean firewall(Player player, Cast cast) {
 		Block wTargetBlock = player.getTargetBlock(null, 25);
 		Util.setRelativeBlocks(wTargetBlock, BlockFace.UP, Material.FIRE, 3);
 		Block wOneUp = wTargetBlock.getRelative(BlockFace.UP);
@@ -247,7 +250,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean teleport(Player player) {
+	public boolean teleport(Player player, Cast cast) {
 		Block wTargetBlock = player.getTargetBlock(null, MAX_DISTANCE);
 		Block wOneAbove = wTargetBlock.getRelative(BlockFace.UP);
 		Block wTwoAbove = wOneAbove.getRelative(BlockFace.UP);
@@ -265,7 +268,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean bolt(Player player) {
+	public boolean bolt(Player player, Cast cast) {
 		Location wLocation = player.getTargetBlock(null, MAX_DISTANCE)
 				.getLocation();
 		player.getWorld().strikeLightning(wLocation);
@@ -278,7 +281,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean fire(Player player) {
+	public boolean fire(Player player, Cast cast) {
 		Block wTarget = player.getTargetBlock(null, MAX_DISTANCE);
 		wTarget.getFace(BlockFace.UP).setType(Material.FIRE);
 		wTarget.getRelative(BlockFace.EAST).getFace(BlockFace.UP)
@@ -308,7 +311,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean precip(Player player) {
+	public boolean precip(Player player, Cast cast) {
 		player.getWorld().setStorm(true);
 		player.getWorld().setThundering(true);
 		player.getWorld().setThunderDuration(100);
@@ -324,7 +327,7 @@ public class ReagentPlayerListener extends PlayerListener {
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean timebomb(Player player) {
+	public boolean timebomb(Player player, Cast cast) {
 		Block wTargetBlock = player.getTargetBlock(null, MAX_DISTANCE);
 		wTargetBlock.setTypeId(46, false);
 		wTargetBlock.getFace(BlockFace.UP).setType(Material.FIRE);

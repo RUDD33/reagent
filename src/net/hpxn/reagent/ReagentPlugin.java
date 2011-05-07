@@ -28,7 +28,7 @@ public class ReagentPlugin extends JavaPlugin {
 	private Configuration config;
 	private PluginDescriptionFile pdf;
 	private final ReagentPlayerListener pLst = new ReagentPlayerListener(this);
-	public ConcurrentHashMap<Player, String> playerSpellMap;
+	public ConcurrentHashMap<Player, Cast> playerSpellMap;
 	public PermissionProvider permissions;
 
 	public void onDisable() {
@@ -45,7 +45,7 @@ public class ReagentPlugin extends JavaPlugin {
 			permissions = new OpPermissions(new String[] { "reagent" });
 
 		pLst.setConfig(config);
-		playerSpellMap = new ConcurrentHashMap<Player, String>();
+		playerSpellMap = new ConcurrentHashMap<Player, Cast>();
 
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pLst, Priority.Normal,
@@ -77,14 +77,16 @@ public class ReagentPlugin extends JavaPlugin {
 				player.sendMessage(ChatColor.YELLOW + "Unknown spell...");
 				return true;
 			}
+			
+			Cast cast = new Cast(spell);
 
 			if (permissions.has(sender, "free")) {
 				player.sendMessage(ChatColor.AQUA + spell
 						+ " initialized. Free!");
-				playerSpellMap.put(player, spell);
+				playerSpellMap.put(player, cast);
 			} else {
 				if (hasMaterials(player, spell, true)) {
-					playerSpellMap.put(player, spell);
+					playerSpellMap.put(player, cast);
 				}
 			}
 			return true;
