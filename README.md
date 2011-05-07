@@ -35,5 +35,4 @@ TODO
 ----
 
 - Add more spells!
-- Configurable spell cool down timer.
 - Easier casting (maybe a wand or something else...)
