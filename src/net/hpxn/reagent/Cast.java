@@ -4,14 +4,12 @@ import java.util.Date;
 
 public class Cast {
 	private boolean initialized;
-	private String name;
 	private Date lastUsed;
 	private Date dateInitialized;
 	private boolean success;
 	private String result;
 
-	public Cast(String name) {
-		this.name = name;
+	public Cast() {
 		this.initialized = true;
 		this.dateInitialized = new Date();
 	}
@@ -30,14 +28,6 @@ public class Cast {
 
 	public void setInitialized(boolean initialized) {
 		this.initialized = initialized;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Date getLastUsed() {

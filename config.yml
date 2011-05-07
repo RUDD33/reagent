@@ -13,44 +13,70 @@ hint: true
 # List of spells. Configure each spells cost.
 spells:
   fire:
-    wood: 10
-    flint: 2
-    coal: 1
+    cooldown: 5
+    materials:
+      wood: 10
+      flint: 2
+      coal: 1
   bolt:
-    redstone: 10
-    glass: 1
+    cooldown: 5
+    materials:
+      redstone: 10
+      glass: 1
   precip:
-    diamond: 1
-    water_bucket: 1
-    redstone: 5
+    cooldown: 5
+    materials:
+      diamond: 1
+      water_bucket: 1
+      redstone: 5
   timebomb:
-    redstone: 10
-    coal: 20
-    flint: 5
+    cooldown: 30
+    materials:
+      redstone: 10
+      coal: 20
+      flint: 5
   teleport:
-    redstone: 8
+    cooldown: 5
+    materials:
+      redstone: 8
   teleportspawn:
-    compass: 1
-    redstone: 5
+    cooldown: 30
+    materials:
+      compass: 1
+      redstone: 5
   heal:
-    redstone: 10
+    cooldown: 30
+    materials:
+      redstone: 10
   arrowstorm:
-    wood: 5
-    feather: 1
-    flint: 1
+    cooldown: 20
+    materials:
+      wood: 5
+      feather: 1
+      flint: 1
   air:
-    cobblestone: 1
+    cooldown: 5
+    materials:
+      cobblestone: 1
   stonewall:
-    stone: 20
-    redstone: 5
+    cooldown: 30
+    materials:
+      stone: 20
+      redstone: 5
   skeleton:
-    bone: 20
-    obsidian: 1
+    cooldown: 60
+    materials:
+      bone: 20
+      obsidian: 1
   firewall:
-    wood: 10
-    coal: 10
-    flint: 1
+    cooldown: 30
+    materials:
+      wood: 10
+      coal: 10
+      flint: 1
   timetravel:
-    watch: 1
-    diamond: 5
-    redstone: 5
+    cooldown: 60
+    materials:
+      watch: 1
+      diamond: 5
+      redstone: 5

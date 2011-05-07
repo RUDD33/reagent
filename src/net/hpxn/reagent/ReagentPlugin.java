@@ -1,5 +1,7 @@
 package net.hpxn.reagent;
 
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +30,7 @@ public class ReagentPlugin extends JavaPlugin {
 	private Configuration config;
 	private PluginDescriptionFile pdf;
 	private final ReagentPlayerListener pLst = new ReagentPlayerListener(this);
-	public ConcurrentHashMap<Player, Cast> playerSpellMap;
+	public ConcurrentHashMap<Player, HashMap<String, Cast>> playerSpellMap;
 	public PermissionProvider permissions;
 
 	public void onDisable() {
@@ -45,7 +47,7 @@ public class ReagentPlugin extends JavaPlugin {
 			permissions = new OpPermissions(new String[] { "reagent" });
 
 		pLst.setConfig(config);
-		playerSpellMap = new ConcurrentHashMap<Player, Cast>();
+		playerSpellMap = new ConcurrentHashMap<Player, HashMap<String, Cast>>();
 
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvent(Event.Type.PLAYER_INTERACT, pLst, Priority.Normal,
@@ -66,7 +68,7 @@ public class ReagentPlugin extends JavaPlugin {
 		}
 		if (args.length > 0) {
 			String spell = args[0];
-
+			
 			if (!permissions.has(sender, "spells." + spell.toLowerCase())) {
 				sender.sendMessage(ChatColor.DARK_RED
 						+ "You don't have permission to use this spell!");
@@ -78,20 +80,79 @@ public class ReagentPlugin extends JavaPlugin {
 				return true;
 			}
 			
-			Cast cast = new Cast(spell);
-
-			if (permissions.has(sender, "free")) {
-				player.sendMessage(ChatColor.AQUA + spell
-						+ " initialized. Free!");
-				playerSpellMap.put(player, cast);
+			if ( permissions.has( sender, "free" )
+					&& !(permissions instanceof OpPermissions) ) {
+				player.sendMessage( ChatColor.AQUA + spell
+						+ " initialized. Free!" );
+				initializeSpell( player, spell, false );
 			} else {
-				if (hasMaterials(player, spell, true)) {
-					playerSpellMap.put(player, cast);
-				}
+				initializeSpell( player, spell, true );
 			}
 			return true;
 		}
 		return false;
+	}
+	
+	private boolean initializeSpell( Player player, String spell,
+			boolean removeMaterials ) {
+		Cast wNewCast = new Cast();
+		HashMap<String, Cast> wCastMap = playerSpellMap.get( player );
+		if ( wCastMap != null ) {
+			for ( Entry<String, Cast> wCast : wCastMap.entrySet() ) {
+				if ( wCast.getValue().isInitialized() ) {
+					player.sendMessage( ChatColor.DARK_RED + "The "
+							+ wCast.getKey()
+							+ " spell is already initialized. Cast it first." );
+					return false;
+				}
+			}
+			Cast wCast = wCastMap.get( spell );
+			if ( wCast != null ) {
+				int wCoolDown = getSpellCoolDown( spell );
+				Calendar wNow = Calendar.getInstance();
+				Calendar wLastUsed = Calendar.getInstance();
+				if ( wCast.getLastUsed() != null ) {
+					wLastUsed.setTime( wCast.getLastUsed() );
+					wLastUsed.add( Calendar.SECOND, wCoolDown );
+					if ( wNow.after( wLastUsed ) ) {
+						if ( hasMaterials(player, spell, removeMaterials) ) {
+							wCastMap.put(spell, wNewCast);
+							playerSpellMap.put( player, wCastMap );
+						}
+					} else {
+						wLastUsed.setTime( wCast.getLastUsed() );
+						long wMilliseconds = wCoolDown * 1000
+								- (wNow.getTimeInMillis() - wLastUsed
+										.getTimeInMillis());
+						player.sendMessage( ChatColor.DARK_RED + spell
+								+ " must cooldown. (" + (wMilliseconds / 1000)
+								+ ") seconds." );
+						return false;
+					}
+				}
+			} else {
+				if ( hasMaterials(player, spell, removeMaterials) ) {
+					wCastMap.put(spell, wNewCast);
+				}
+			}
+		} else {
+			if ( hasMaterials(player, spell, removeMaterials) ) {
+				wCastMap = new HashMap<String, Cast>();
+				wCastMap.put(spell, wNewCast);
+				playerSpellMap.put( player, wCastMap );
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns the cooldown for the specified spell.
+	 * 
+	 * @param spell
+	 * @return int - cooldown in seconds
+	 */
+	private int getSpellCoolDown( String spell ) {
+		return config.getInt("spells." + spell + ".cooldown", 0);
 	}
 
 	/**
@@ -102,7 +163,7 @@ public class ReagentPlugin extends JavaPlugin {
 	 * @return true if spell is in config.yml. false otherwise.
 	 */
 	private boolean isSpellAvailable(String spell) {
-		if (config.getProperty("spells." + spell) == null) {
+		if (config.getProperty("spells." + spell + ".materials") == null) {
 			return false;
 		}
 		return true;
@@ -119,7 +180,7 @@ public class ReagentPlugin extends JavaPlugin {
 	 */
 	private boolean hasMaterials(Player player, String spell, boolean remove) {
 		for (Entry<?, ?> wMlsAmt : ((Map<?, ?>) config.getProperty("spells."
-				+ spell)).entrySet()) {
+				+ spell + ".materials")).entrySet()) {
 			Material wMaterial = Material.valueOf(((String) wMlsAmt.getKey())
 					.toUpperCase());
 			Integer wCost = (Integer) wMlsAmt.getValue();
@@ -148,7 +209,7 @@ public class ReagentPlugin extends JavaPlugin {
 	private void removeMaterials(Player player, String spell) {
 		String wSpellcost = "";
 		for (Entry<?, ?> wMtlsAmt : ((Map<?, ?>) config.getProperty("spells."
-				+ spell)).entrySet()) {
+				+ spell + ".materials")).entrySet()) {
 			Material wMtl = Material.valueOf(((String) wMtlsAmt.getKey())
 					.toUpperCase());
 			Integer wAmt = (Integer) wMtlsAmt.getValue();
