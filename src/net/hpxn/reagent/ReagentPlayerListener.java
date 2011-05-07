@@ -36,17 +36,17 @@ public class ReagentPlayerListener extends PlayerListener {
 				Cast cast = rp.playerSpellMap.get(player);
 				if (cast != null) {
 					Method wMethod = this.getClass().getMethod(cast.getName(),
-							Player.class);
+							Player.class, Cast.class);
 					boolean isSuccess = (Boolean) wMethod.invoke(this, player, cast);
 
 					if (isSuccess) {
 						if (config.getBoolean("broadcast", true)) {
 							rp.getServer().broadcastMessage(
 									ChatColor.AQUA + player.getName()
-											+ " cast " + cast + "!");
+											+ " cast " + cast.getName() + "!");
 						} else {
 							player.sendMessage(ChatColor.AQUA + "You cast "
-									+ cast + "!");
+									+ cast.getName() + "!");
 						}
 						rp.playerSpellMap.remove(player);
 					} else {
