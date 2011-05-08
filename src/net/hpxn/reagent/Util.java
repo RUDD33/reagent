@@ -7,6 +7,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 public class Util {
+	// Maximum block target distance.
+	public final static int MAX_DISTANCE = 120;
 	/**
 	 * Returns the distance between 2 points in 3d space... I think.
 	 * 
@@ -49,7 +51,7 @@ public class Util {
 	 */
 	public static BlockFace getPlayerDirection(Player player) {
 		Block wTargetBlock = player.getTargetBlock(
-			null, ReagentPlayerListener.MAX_DISTANCE);
+			null, MAX_DISTANCE);
 		double wTargetX = wTargetBlock.getX();
 		double wTargetZ = wTargetBlock.getZ();
 
