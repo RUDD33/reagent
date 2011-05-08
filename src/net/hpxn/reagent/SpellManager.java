@@ -55,6 +55,14 @@ public class SpellManager {
 		return true;
 	}
 	
+	/**
+	 * Casts the house spell. This spell builds a small house for the player to 
+	 * rest in.
+	 * 
+	 * @param player
+	 * @param cast
+	 * @return true if success
+	 */
 	public boolean house(Player player, Cast cast) {
 		return true;
 	}
@@ -284,14 +292,14 @@ public class SpellManager {
 	}
 
 	/**
-	 * Casts the precip spell. This is called precip because the precipitation
+	 * Casts the storm spell. This is called storm because the precipitation
 	 * type depends on the biome the player is currently in when the spell is
 	 * cast.
 	 * 
 	 * @param player
 	 * @return true if success
 	 */
-	public boolean precip(Player player, Cast cast) {
+	public boolean storm(Player player, Cast cast) {
 		player.getWorld().setStorm(true);
 		player.getWorld().setThundering(true);
 		player.getWorld().setThunderDuration(100);

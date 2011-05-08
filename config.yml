@@ -1,5 +1,5 @@
 # Reagent Configuration
-# Spells: fire, bolt, precip, timebomb, teleport, teleportspawn, heal,
+# Spells: fire, bolt, storm, timebomb, teleport, teleportspawn, heal,
 #         arrowstorm, air, stonewall, firewall, skeleton, timetravel,
 #         megabolt
 #
@@ -29,7 +29,7 @@ spells:
     materials:
       redstone: 10
       glass: 1
-  precip:
+  storm:
     cooldown: 5
     materials:
       diamond: 1
