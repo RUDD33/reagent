@@ -13,11 +13,13 @@ When using Reagent, players need to pay more attention to when they should cast 
 Change Log
 ----------
 v0.2
+
 - Added a cooldown timer for each spell.
 - Configuration was changed to allow for cooldown.
 - If permissions is not installed then all players will pay for spells (Ops included).
 
 v0.1
+
 - Initial release.
 
 
