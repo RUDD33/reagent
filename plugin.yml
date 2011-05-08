@@ -1,6 +1,6 @@
 name: Reagent
 main: net.hpxn.reagent.ReagentPlugin
-version: 0.2
+version: 0.3
 author: pr0f1x
 commands:
   reagent:

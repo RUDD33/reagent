@@ -13,6 +13,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.CreatureType;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -88,6 +90,43 @@ public class ReagentPlayerListener extends PlayerListener {
 
 	public void setConfig(Configuration config) {
 		this.config = config;
+	}
+	
+	/**
+	 * Casts the megabolt spell. This spell will strike all monsters in the area
+	 * with a bolt of lightning 1 second apart. (30x30)
+	 * 
+	 * @param player
+	 * @param cast
+	 * @return true if success
+	 */
+	public boolean megabolt( final Player player, Cast cast ) {
+		final int MEGABOLT_MAX_DISTANCE = 30;
+		new Thread( new Runnable() {
+			@Override
+			public void run() {
+				for ( Entity wMonster : player.getWorld().getEntities() ) {
+					if ( wMonster instanceof Monster ) {
+						double wDistance = Util.getDistance(
+								player.getLocation(), wMonster.getLocation() );
+						if ( wDistance < MEGABOLT_MAX_DISTANCE ) {
+							player.getWorld().strikeLightning(
+									wMonster.getLocation() );
+							try {
+								Thread.sleep( 1000 );
+							} catch ( InterruptedException e ) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		} ).start();
+		return true;
+	}
+	
+	public boolean house(Player player, Cast cast) {
+		return true;
 	}
 
 	/**

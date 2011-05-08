@@ -1,11 +1,34 @@
 package net.hpxn.reagent;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 public class Util {
+	/**
+	 * Returns the distance between 2 points in 3d space... I think.
+	 * 
+	 * @param loc1
+	 * @param loc2
+	 * @return double - the distance
+	 */
+	public static double getDistance(Location loc1, Location loc2) {
+		return Math.sqrt( Math.pow(
+				(loc2.getX() - loc1.getX()), 2 )
+				+ Math.pow( (loc2.getZ() - loc1.getZ()), 2 ) +
+				Math.pow( (loc2.getY() - loc1.getY()), 2 ) );
+	}
+	
+	/**
+	 * Sets relative blocks to a type based on side. Should fix this up...
+	 * 
+	 * @param targetBlock
+	 * @param blockFace
+	 * @param material
+	 * @param num
+	 */
 	public static void setRelativeBlocks(Block targetBlock, BlockFace blockFace,
 			Material material, int num) {
 		targetBlock = targetBlock.getRelative(blockFace);
