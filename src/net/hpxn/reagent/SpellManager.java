@@ -33,7 +33,6 @@ public class SpellManager {
 	public boolean megabolt( final Player player, Cast cast ) {
 		final int MEGABOLT_MAX_DISTANCE = 30;
 		new Thread( new Runnable() {
-			@Override
 			public void run() {
 				for ( Entity wMonster : player.getWorld().getEntities() ) {
 					if ( wMonster instanceof Monster ) {

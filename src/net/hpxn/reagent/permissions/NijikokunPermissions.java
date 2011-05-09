@@ -26,7 +26,6 @@ public class NijikokunPermissions implements PermissionProvider {
 		permissions = ((Permissions) permissionsPlugin).getHandler();
 	}
 
-	@Override
 	public boolean has( CommandSender sender, String permission ) {
 		Player player = sender instanceof Player ? (Player) sender : null;
 		return player != null ? permissions.has( player, name + "."

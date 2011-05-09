@@ -14,7 +14,6 @@ public class OpPermissions implements PermissionProvider {
 		}
 	}
 
-	@Override
 	public boolean has( CommandSender sender, String permission ) {
 		if ( sender instanceof Player ) {
 			return ((Player)sender).isOp();
