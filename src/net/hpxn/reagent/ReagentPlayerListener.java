@@ -27,54 +27,54 @@ public class ReagentPlayerListener extends PlayerListener {
 		if ((event.getAction() == Action.RIGHT_CLICK_BLOCK)
 				|| (event.getAction() == Action.RIGHT_CLICK_AIR)) {
 			Player player = event.getPlayer();
-			try {
-				HashMap<String, Cast> wCastMap = rp.playerSpellMap.get( player );
-				if ( wCastMap != null ) {
-					for ( Entry<String, Cast> wCast : wCastMap.entrySet() ) {
-						if ( wCast.getValue().isInitialized() ) {
-							SpellManager wSpellManager = SpellManager
-									.getInstance();
-							Method wMethod = wSpellManager.getClass()
-									.getMethod( wCast.getKey(), Player.class,
-											Cast.class );
-							boolean isSuccess = (Boolean) wMethod.invoke(
-									wSpellManager, player, wCast.getValue() );
+			castSpell(player);
+		}
+	}
+	
+	private void castSpell(Player player) {
+		try {
+			HashMap<String, Cast> wCastMap = rp.playerSpellMap.get(player);
+			if (wCastMap != null) {
+				for (Entry<String, Cast> wCast : wCastMap.entrySet()) {
+					if (wCast.getValue().isInitialized()) {
+						SpellManager wSpellManager = SpellManager.getInstance();
+						Method wMethod = wSpellManager.getClass().getMethod(
+								wCast.getKey(), Player.class, Cast.class);
+						boolean isSuccess = (Boolean) wMethod.invoke(
+								wSpellManager, player, wCast.getValue());
 
-							if ( isSuccess ) {
-								wCast.getValue().setInitialized( false );
-								wCast.getValue().setLastUsed( new Date() );
-								if ( config.getBoolean( "broadcast", true ) ) {
-									rp.getServer().broadcastMessage(
-											ChatColor.AQUA + player.getName()
-													+ " cast " + wCast.getKey()
-													+ "!" );
-								} else {
-									player.sendMessage( ChatColor.AQUA
-											+ "You cast " + wCast.getKey()
-											+ "!" );
-								}
+						if (isSuccess) {
+							wCast.getValue().setInitialized(false);
+							wCast.getValue().setLastUsed(new Date());
+							if (config.getBoolean("broadcast", true)) {
+								rp.getServer().broadcastMessage(
+										ChatColor.AQUA + player.getName()
+												+ " cast " + wCast.getKey()
+												+ "!");
 							} else {
-								player.sendMessage( ChatColor.YELLOW
-										+ "fizzle..." );
+								player.sendMessage(ChatColor.AQUA + "You cast "
+										+ wCast.getKey() + "!");
 							}
+						} else {
+							player.sendMessage(ChatColor.YELLOW + "fizzle...");
 						}
 					}
 				}
-			} catch (SecurityException e) {
-				log.severe("Reagent: " + e.getMessage());
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				log.severe("Reagent: " + e.getMessage());
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				player.sendMessage(ChatColor.YELLOW + "Unknown spell....");
-			} catch (IllegalAccessException e) {
-				log.severe("Reagent: " + e.getMessage());
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				log.severe("Reagent: " + e.getMessage());
-				e.printStackTrace();
 			}
+		} catch (SecurityException e) {
+			log.severe("Reagent: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			log.severe("Reagent: " + e.getMessage());
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			player.sendMessage(ChatColor.YELLOW + "Unknown spell....");
+		} catch (IllegalAccessException e) {
+			log.severe("Reagent: " + e.getMessage());
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			log.severe("Reagent: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
