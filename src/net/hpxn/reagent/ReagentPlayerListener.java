@@ -19,8 +19,9 @@ public class ReagentPlayerListener extends PlayerListener {
 	private static ReagentPlugin rp;
 	private Configuration config;
 
-	public ReagentPlayerListener(ReagentPlugin plugin) {
+	public ReagentPlayerListener(ReagentPlugin plugin, Configuration config) {
 		rp = plugin;
+		this.config = config;
 	}
 
 	public void onPlayerInteract(PlayerInteractEvent event) {
@@ -76,13 +77,5 @@ public class ReagentPlayerListener extends PlayerListener {
 			log.severe("Reagent: " + e.getMessage());
 			e.printStackTrace();
 		}
-	}
-
-	public Configuration getConfig() {
-		return config;
-	}
-
-	public void setConfig(Configuration config) {
-		this.config = config;
 	}
 }
