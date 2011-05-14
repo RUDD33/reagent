@@ -1,11 +1,14 @@
 package net.hpxn.reagent;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Properties;
 
 public class Cast {
 	private boolean initialized;
 	private Date lastUsed;
 	private Date dateInitialized;
+	private HashMap<String, Object> properties;
 	private boolean success;
 	private String result;
 
@@ -52,5 +55,9 @@ public class Cast {
 
 	public void setResult(String result) {
 		this.result = result;
+	}
+
+	public HashMap<String, Object> getProperties() {
+		return properties;
 	}
 }
