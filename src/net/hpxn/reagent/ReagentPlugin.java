@@ -231,10 +231,14 @@ public class ReagentPlugin extends JavaPlugin {
 	private void removeItems(Player player, Material material, int amount) {
 		for (ItemStack wItemStack : player.getInventory().getContents()) {
 			if (wItemStack != null && wItemStack.getType() == material) {
-				if (wItemStack.getAmount() == amount) {
-					player.getInventory().remove(wItemStack);
-				} else if (wItemStack.getAmount() > amount) {
+				if (wItemStack.getAmount() >= amount) {
 					wItemStack.setAmount(wItemStack.getAmount() - amount);
+					if (wItemStack.getAmount() == 0) {
+						player.getInventory().remove(wItemStack);
+					}
+				} else {
+					amount -= wItemStack.getAmount();
+					player.getInventory().remove(wItemStack);
 				}
 			}
 		}
