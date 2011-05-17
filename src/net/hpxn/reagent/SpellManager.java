@@ -21,6 +21,41 @@ public class SpellManager {
 		}
 		return instance;
 	}
+
+	public boolean recall(Player player, Cast cast) {
+		// Hmm. Find a good way to get other casts in the player spell map.
+		return true;
+	}
+	
+	public boolean mark(Player player, Cast cast) {
+		cast.getProperties().put("location", player.getLocation());
+		player.sendMessage("Location marked!");
+		return true;
+	}
+	
+	/**
+	 * Casts the scan spell. Scans the area for monsters and returns how many 
+	 * their are to the player. Should improve this eventually.
+	 * 
+	 * @param player
+	 * @param cast
+	 * @return true if successful
+	 */
+	public boolean scan( Player player, Cast cast ) {
+		final int SCAN_MAX_DISTANCE = 30;
+		int wMonsterCount = 0;
+		for ( Entity wMonster : player.getWorld().getEntities() ) {
+			if ( wMonster instanceof Monster ) {
+				double wDistance = Util.getDistance(
+						player.getLocation(), wMonster.getLocation() );
+				if ( wDistance < SCAN_MAX_DISTANCE ) {
+					wMonsterCount++;
+				}
+			}
+		}
+		player.sendMessage( wMonsterCount + " monsters are nearby..." );
+		return true;
+	}
 	
 	/**
 	 * Casts the megabolt spell. This spell will strike all monsters in the area
@@ -63,6 +98,7 @@ public class SpellManager {
 	 * @return true if success
 	 */
 	public boolean house(Player player, Cast cast) {
+		// Bleh! I want this spell but I am too lazy.
 		return true;
 	}
 
