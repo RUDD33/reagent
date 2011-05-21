@@ -69,10 +69,6 @@ spells:
       wood: 5
       feather: 1
       flint: 1
-  air:
-    cooldown: 5
-    materials:
-      cobblestone: 1
   stonewall:
     cooldown: 30
     materials:
@@ -82,6 +78,11 @@ spells:
     cooldown: 60
     materials:
       bone: 20
+      obsidian: 1
+  zombie:
+    cooldown: 60
+    materials:
+      pork: 20
       obsidian: 1
   firewall:
     cooldown: 30

@@ -147,18 +147,6 @@ public class SpellManager {
 	}
 
 	/**
-	 * Casts the air spell. This replenishes your air supply while underwater.
-	 * 
-	 * @param player
-	 * @return true if success
-	 */
-	public boolean air(Player player, Cast cast) {
-		player.setMaximumAir(20);
-		player.setRemainingAir(20);
-		return true;
-	}
-
-	/**
 	 * Casts the heal spell. This heals your character completely.
 	 * 
 	 * @param player
@@ -196,6 +184,22 @@ public class SpellManager {
 				BlockFace.UP);
 		player.getWorld().spawnCreature(wTargetBlock.getLocation(),
 				CreatureType.SKELETON);
+		return true;
+	}
+	
+	/**
+	 * Casts the zombie spell. This spell spawns a zombie at a maximum of 20
+	 * blocks from the player location. Not much use since it will probably
+	 * attack you.
+	 * 
+	 * @param player
+	 * @return true if success
+	 */
+	public boolean zombie(Player player, Cast cast) {
+		Block wTargetBlock = player.getTargetBlock(null, 20).getFace(
+				BlockFace.UP);
+		player.getWorld().spawnCreature(wTargetBlock.getLocation(),
+				CreatureType.ZOMBIE);
 		return true;
 	}
 
