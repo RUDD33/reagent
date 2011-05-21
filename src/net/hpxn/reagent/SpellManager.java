@@ -22,16 +22,16 @@ public class SpellManager {
 		return instance;
 	}
 
-	public boolean recall(Player player, Cast cast) {
-		// Hmm. Find a good way to get other casts in the player spell map.
-		return true;
-	}
-	
-	public boolean mark(Player player, Cast cast) {
-		cast.getProperties().put("location", player.getLocation());
-		player.sendMessage("Location marked!");
-		return true;
-	}
+//	public boolean recall(Player player, Cast cast) {
+//		// Hmm. Find a good way to get other casts in the player spell map.
+//		return true;
+//	}
+//	
+//	public boolean mark(Player player, Cast cast) {
+//		cast.getProperties().put("location", player.getLocation());
+//		player.sendMessage("Location marked!");
+//		return true;
+//	}
 	
 	/**
 	 * Casts the scan spell. Scans the area for monsters and returns how many 
