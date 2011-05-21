@@ -12,6 +12,13 @@ When using Reagent, players need to pay more attention to when they should cast 
 
 Change Log
 ----------
+
+v0.3
+
+- Fixed bug where sometimes the materials would not be consumed if you had multiple small stacks of the same material.
+- Removed the air spell. (Never worked)
+- Added 4 new spells.
+
 v0.2
 
 - Added a cooldown timer for each spell.
@@ -27,7 +34,6 @@ Known Issues
 ------------
 
 - Cannot target far away blocks when empty handed. (Bukkit bug?)
-- The air spell just doesn't work. (Bukkit bug?)
 
 
 Requirements
