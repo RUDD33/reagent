@@ -213,34 +213,11 @@ public class ReagentPlugin extends JavaPlugin {
 			Material wMtl = Material.valueOf(((String) wMtlsAmt.getKey())
 					.toUpperCase());
 			Integer wAmt = (Integer) wMtlsAmt.getValue();
-			removeItems(player, wMtl, wAmt);
+			player.getInventory().removeItem(new ItemStack(wMtl, wAmt));
 			wSpellcost += wAmt + " " + wMtl.name().toLowerCase() + " ";
 		}
 		wSpellcost = wSpellcost.replace('_', ' ');
 		player.sendMessage(ChatColor.AQUA + spell + " spell ready! "
 				+ wSpellcost + "consumed.");
-	}
-
-	/**
-	 * Removes item(s) from a players inventory.
-	 * 
-	 * @param player
-	 * @param material
-	 * @param amount
-	 */
-	private void removeItems(Player player, Material material, int amount) {
-		for (ItemStack wItemStack : player.getInventory().getContents()) {
-			if (wItemStack != null && wItemStack.getType() == material) {
-				if (wItemStack.getAmount() >= amount) {
-					wItemStack.setAmount(wItemStack.getAmount() - amount);
-					if (wItemStack.getAmount() == 0) {
-						player.getInventory().remove(wItemStack);
-					}
-				} else {
-					amount -= wItemStack.getAmount();
-					player.getInventory().remove(wItemStack);
-				}
-			}
-		}
 	}
 }
