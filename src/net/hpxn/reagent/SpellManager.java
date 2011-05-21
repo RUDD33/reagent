@@ -1,9 +1,11 @@
 package net.hpxn.reagent;
 
 import java.util.Date;
+import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.TreeType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.CreatureType;
@@ -32,6 +34,23 @@ public class SpellManager {
 //		player.sendMessage("Location marked!");
 //		return true;
 //	}
+	
+	/**
+	 * Casts the tree spell. This spell plants a tree where the player clicks.
+	 * The tree type will be random.
+	 * 
+	 * @param player
+	 * @param cast
+	 * @return true if successful
+	 */
+	public boolean tree(Player player, Cast cast) {
+		Block wTargetBlock = player.getTargetBlock(null, 100).getFace(
+				BlockFace.UP);
+		TreeType wType = TreeType.values()[new Random().nextInt(TreeType
+				.values().length)];
+		return player.getWorld()
+				.generateTree(wTargetBlock.getLocation(), wType);
+	}
 	
 	/**
 	 * Casts the scan spell. Scans the area for monsters and returns how many 
