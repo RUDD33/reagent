@@ -1,7 +1,7 @@
 # Reagent Configuration
 # Spells: fire, bolt, storm, timebomb, teleport, teleportspawn, heal,
 #         arrowstorm, air, stonewall, firewall, skeleton, timetravel,
-#         megabolt
+#         megabolt, scan, tree
 #
 # Info: https://github.com/pr0f1x/reagent
 
@@ -13,6 +13,15 @@ hint: true
 
 # List of spells. Configure each spells cost.
 spells:
+  tree:
+    cooldown: 60
+    bone: 1
+    sapling: 1
+  scan:
+    cooldown: 60
+    materials:
+      redstone: 5
+      obsidian: 1
   megabolt:
     cooldown: 60
     materials:

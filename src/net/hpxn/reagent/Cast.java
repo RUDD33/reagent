@@ -2,7 +2,6 @@ package net.hpxn.reagent;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Properties;
 
 public class Cast {
 	private boolean initialized;
