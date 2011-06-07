@@ -21,8 +21,9 @@ item: book
 spells:
   tree:
     cooldown: 60
-    bone: 1
-    sapling: 1
+    materials:
+      bone: 1
+      sapling: 1
   scan:
     cooldown: 60
     materials:
