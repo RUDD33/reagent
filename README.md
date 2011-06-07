@@ -43,7 +43,7 @@ Known Issues
 Requirements
 ------------
 
-- You must be using at least build 733 of CraftBukkit.
+- You must be using at least build 818 of CraftBukkit.
 - You need permissions to be able to give users the ability to cast spells. Without Permissions only OPS can cast spells.
 
 
