@@ -125,9 +125,11 @@ public class ReagentPlayerListener extends PlayerListener {
 							} else {
 								player.sendMessage(ChatColor.AQUA + "You cast "
 										+ wCast.getKey() + "!");
+								return true;
 							}
 						} else {
 							player.sendMessage(ChatColor.YELLOW + "fizzle...");
+							return true;
 						}
 					}
 				}
