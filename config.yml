@@ -11,6 +11,12 @@ broadcast: true
 # Give players hints on what materials they are missing.
 hint: true
 
+# Allow players to cast spells with the command line.
+command: false
+
+# Allow players to cast spells with an item.
+item: book
+
 # List of spells. Configure each spells cost.
 spells:
   tree:

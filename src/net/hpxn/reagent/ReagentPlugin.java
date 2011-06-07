@@ -26,7 +26,7 @@ import org.bukkit.util.config.Configuration;
 
 public class ReagentPlugin extends JavaPlugin {
 
-	protected static final Logger log = Logger.getLogger("Minecraft");
+	protected static final Logger log = Logger.getLogger( "Minecraft" );
 	private Configuration config;
 	private PluginDescriptionFile pdf;
 	private ReagentPlayerListener pLst;
@@ -35,67 +35,81 @@ public class ReagentPlugin extends JavaPlugin {
 
 	public void onDisable() {
 		playerSpellMap = null;
-		log.info(pdf.getName() + " v" + pdf.getVersion() + " - Disabled.");
+		log.info( pdf.getName() + " v" + pdf.getVersion() + " - Disabled." );
 	}
 
 	public void onEnable() {
 		config = getConfiguration();
 		pdf = getDescription();
 
-		permissions = NijikokunPermissions.create(getServer(), "reagent");
-		if (permissions == null)
-			permissions = new OpPermissions(new String[] { "reagent" });
-		
-		pLst = new ReagentPlayerListener(this, config);
+		permissions = NijikokunPermissions.create( getServer(), "reagent" );
+		if ( permissions == null )
+			permissions = new OpPermissions( new String[] { "reagent" } );
+
+		pLst = new ReagentPlayerListener( this, config );
 
 		playerSpellMap = new ConcurrentHashMap<Player, HashMap<String, Cast>>();
 
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvent(Event.Type.PLAYER_INTERACT, pLst, Priority.Normal,
-				this);
+		pm.registerEvent( Event.Type.PLAYER_INTERACT, pLst, Priority.Normal,
+				this );
 
-		log.info(pdf.getName() + " v" + pdf.getVersion() + " - Enabled.");
+		log.info( pdf.getName() + " v" + pdf.getVersion() + " - Enabled." );
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
-		if (!cmd.getName().equalsIgnoreCase("reagent")) {
+	public boolean onCommand( CommandSender sender, Command cmd, String label,
+			String[] args ) {
+		if ( !cmd.getName().equalsIgnoreCase( "reagent" ) ) {
 			return false;
 		}
 		Player player = null;
-		if (sender instanceof Player) {
+		if ( sender instanceof Player ) {
 			player = (Player) sender;
 		}
-		if (args.length > 0) {
-			String spell = args[0];
-			
-			if (!permissions.has(sender, "spells." + spell.toLowerCase())) {
-				sender.sendMessage(ChatColor.DARK_RED
-						+ "You don't have permission to use this spell!");
+		if ( args.length > 0 && config.getBoolean( "command", true ) ) {
+			String spell = args[ 0 ];
+
+			if ( !permissions.has( sender, "spells." + spell.toLowerCase() ) ) {
+				sender.sendMessage( ChatColor.DARK_RED
+						+ "You don't have permission to use this spell!" );
 				return true;
 			}
 
-			if (!isSpellAvailable(spell)) {
-				player.sendMessage(ChatColor.YELLOW + "Unknown spell...");
+			if ( !isSpellAvailable( spell ) ) {
+				player.sendMessage( ChatColor.YELLOW + "Unknown spell..." );
 				return true;
 			}
-			
-			if ( permissions.has( sender, "free" )
-					&& !(permissions instanceof OpPermissions) ) {
-				player.sendMessage( ChatColor.AQUA + spell
-						+ " initialized. Free!" );
-				initializeSpell( player, spell, false );
-			} else {
-				initializeSpell( player, spell, true );
-			}
+
+			initializeSpell( player, spell );
 			return true;
 		}
 		return false;
 	}
-	
-	private boolean initializeSpell( Player player, String spell,
-			boolean removeMaterials ) {
+
+	public boolean isInitialized( Player player ) {
+		HashMap<String, Cast> wCastMap = playerSpellMap.get( player );
+		if ( wCastMap != null ) {
+			for ( Entry<String, Cast> wCast : wCastMap.entrySet() ) {
+				if ( wCast.getValue().isInitialized() ) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean canCastSpell( Player player, String spell ) {
+		return permissions.has( player, "spells." + spell.toLowerCase() );
+	}
+
+	public boolean initializeSpell( Player player, String spell ) {
+		boolean wRemoveMaterials = true;
+		if ( permissions.has( player, "free" )
+				&& !(permissions instanceof OpPermissions) ) {
+			player.sendMessage( ChatColor.AQUA + spell + " initialized. Free!" );
+			wRemoveMaterials = false;
+		}
 		HashMap<String, Cast> wCastMap = playerSpellMap.get( player );
 		if ( wCastMap != null ) {
 			for ( Entry<String, Cast> wCast : wCastMap.entrySet() ) {
@@ -115,13 +129,14 @@ public class ReagentPlugin extends JavaPlugin {
 					wLastUsed.setTime( wCast.getLastUsed() );
 					wLastUsed.add( Calendar.SECOND, wCoolDown );
 					if ( wNow.after( wLastUsed ) ) {
-						if ( hasMaterials(player, spell, removeMaterials) ) {
-							wCastMap.put(spell, new Cast());
+						if ( hasMaterials( player, spell, wRemoveMaterials ) ) {
+							wCastMap.put( spell, new Cast() );
 							playerSpellMap.put( player, wCastMap );
 						}
 					} else {
 						wLastUsed.setTime( wCast.getLastUsed() );
-						long wMilliseconds = wCoolDown * 1000
+						long wMilliseconds = wCoolDown
+								* 1000
 								- (wNow.getTimeInMillis() - wLastUsed
 										.getTimeInMillis());
 						player.sendMessage( ChatColor.DARK_RED + spell
@@ -131,20 +146,20 @@ public class ReagentPlugin extends JavaPlugin {
 					}
 				}
 			} else {
-				if ( hasMaterials(player, spell, removeMaterials) ) {
-					wCastMap.put(spell, new Cast());
+				if ( hasMaterials( player, spell, wRemoveMaterials ) ) {
+					wCastMap.put( spell, new Cast() );
 				}
 			}
 		} else {
-			if ( hasMaterials(player, spell, removeMaterials) ) {
+			if ( hasMaterials( player, spell, wRemoveMaterials ) ) {
 				wCastMap = new HashMap<String, Cast>();
-				wCastMap.put(spell, new Cast());
+				wCastMap.put( spell, new Cast() );
 				playerSpellMap.put( player, wCastMap );
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Returns the cooldown for the specified spell.
 	 * 
@@ -152,7 +167,7 @@ public class ReagentPlugin extends JavaPlugin {
 	 * @return int - cooldown in seconds
 	 */
 	private int getSpellCoolDown( String spell ) {
-		return config.getInt("spells." + spell + ".cooldown", 0);
+		return config.getInt( "spells." + spell + ".cooldown", 0 );
 	}
 
 	/**
@@ -162,8 +177,8 @@ public class ReagentPlugin extends JavaPlugin {
 	 * @param spell
 	 * @return true if spell is in config.yml. false otherwise.
 	 */
-	private boolean isSpellAvailable(String spell) {
-		if (config.getProperty("spells." + spell + ".materials") == null) {
+	private boolean isSpellAvailable( String spell ) {
+		if ( config.getProperty( "spells." + spell + ".materials" ) == null ) {
 			return false;
 		}
 		return true;
@@ -178,24 +193,24 @@ public class ReagentPlugin extends JavaPlugin {
 	 * @param remove
 	 * @return true if player has all required materials. false otherwise.
 	 */
-	private boolean hasMaterials(Player player, String spell, boolean remove) {
-		for (Entry<?, ?> wMlsAmt : ((Map<?, ?>) config.getProperty("spells."
-				+ spell + ".materials")).entrySet()) {
-			Material wMaterial = Material.valueOf(((String) wMlsAmt.getKey())
-					.toUpperCase());
+	private boolean hasMaterials( Player player, String spell, boolean remove ) {
+		for ( Entry<?, ?> wMlsAmt : ((Map<?, ?>) config.getProperty( "spells."
+				+ spell + ".materials" )).entrySet() ) {
+			Material wMaterial = Material.valueOf( ((String) wMlsAmt.getKey())
+					.toUpperCase() );
 			Integer wCost = (Integer) wMlsAmt.getValue();
-			if (!player.getInventory().contains(wMaterial, wCost)) {
-				player.sendMessage(ChatColor.RED
-						+ "Not enough materials to cast " + spell + ".");
-				if (config.getBoolean("hint", false)) {
-					player.sendMessage(ChatColor.RED + "Missing "
-							+ wMaterial.name().toLowerCase() + ".");
+			if ( !player.getInventory().contains( wMaterial, wCost ) ) {
+				player.sendMessage( ChatColor.RED
+						+ "Not enough materials to cast " + spell + "." );
+				if ( config.getBoolean( "hint", false ) ) {
+					player.sendMessage( ChatColor.RED + "Missing "
+							+ wMaterial.name().toLowerCase() + "." );
 				}
 				return false;
 			}
 		}
-		if (remove) {
-			removeMaterials(player, spell);
+		if ( remove ) {
+			removeMaterials( player, spell );
 		}
 		return true;
 	}
@@ -206,18 +221,18 @@ public class ReagentPlugin extends JavaPlugin {
 	 * @param player
 	 * @param spell
 	 */
-	private void removeMaterials(Player player, String spell) {
+	private void removeMaterials( Player player, String spell ) {
 		String wSpellcost = "";
-		for (Entry<?, ?> wMtlsAmt : ((Map<?, ?>) config.getProperty("spells."
-				+ spell + ".materials")).entrySet()) {
-			Material wMtl = Material.valueOf(((String) wMtlsAmt.getKey())
-					.toUpperCase());
+		for ( Entry<?, ?> wMtlsAmt : ((Map<?, ?>) config.getProperty( "spells."
+				+ spell + ".materials" )).entrySet() ) {
+			Material wMtl = Material.valueOf( ((String) wMtlsAmt.getKey())
+					.toUpperCase() );
 			Integer wAmt = (Integer) wMtlsAmt.getValue();
-			player.getInventory().removeItem(new ItemStack(wMtl, wAmt));
+			player.getInventory().removeItem( new ItemStack( wMtl, wAmt ) );
 			wSpellcost += wAmt + " " + wMtl.name().toLowerCase() + " ";
 		}
-		wSpellcost = wSpellcost.replace('_', ' ');
-		player.sendMessage(ChatColor.AQUA + spell + " spell ready! "
-				+ wSpellcost + "consumed.");
+		wSpellcost = wSpellcost.replace( '_', ' ' );
+		player.sendMessage( ChatColor.AQUA + spell + " spell ready! "
+				+ wSpellcost + "consumed." );
 	}
 }
