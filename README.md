@@ -13,6 +13,10 @@ When using Reagent, players need to pay more attention to when they should cast 
 Change Log
 ----------
 
+v0.4
+
+- This is kind of experimental. You can now cast using an item!
+
 v0.3
 
 - Fixed bug where sometimes the materials would not be consumed if you had multiple small stacks of the same material.
@@ -47,4 +51,3 @@ TODO
 ----
 
 - Add more spells!
-- Easier casting (maybe a wand or something else...)
