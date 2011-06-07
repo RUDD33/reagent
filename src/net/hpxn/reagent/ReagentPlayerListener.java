@@ -61,7 +61,6 @@ public class ReagentPlayerListener extends PlayerListener {
 			if ( wItemInHand.getType() == wCastMaterial && wUseItem ) {
 				rp.initializeSpell( player, getSelectedSpell( player ) );
 			}
-			
 		}
 	}
 	
